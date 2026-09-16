@@ -1,17 +1,16 @@
 services:
-  # ── Backend ─────────────────────────────────────────────────────────────────
   - type: web
     name: papermind-backend
-    runtime: python
+    runtime: node
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma db push && node dist/index.js
     envVars:
-      - key: PYTHON_VERSION
-        value: "3.11"
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
       - key: DATABASE_URL
-        sync: false
-      - key: DATABASE_URL_SYNC
         sync: false
       - key: SECRET_KEY
         generateValue: true
@@ -34,5 +33,4 @@ services:
       - key: CLOUDINARY_API_SECRET
         sync: false
       - key: ALLOWED_ORIGINS
-        sync: false   # set to your frontend URL after first deploy
-
+        sync: false

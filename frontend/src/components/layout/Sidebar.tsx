@@ -1,7 +1,4 @@
-'use client'
-
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, FileText, Upload, Search, GitCompare, LogOut, Sun, Moon, MessageSquare } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { cn } from '@/lib/utils'
@@ -17,20 +14,19 @@ const nav = [
 ]
 
 export function Sidebar() {
-  const pathname = usePathname()
+  const { pathname } = useLocation()
   const logout = useAuthStore((s) => s.logout)
   const user = useAuthStore((s) => s.user)
-  const router = useRouter()
+  const navigate = useNavigate()
   const { theme, setTheme } = useTheme()
 
   const handleLogout = () => {
     logout()
-    router.push('/login')
+    navigate('/login')
   }
 
   return (
     <aside className="w-52 shrink-0 min-h-screen border-r border-border flex flex-col bg-card">
-      {/* Logo */}
       <div className="px-4 h-14 flex items-center gap-2 border-b border-border">
         <div className="w-5 h-5 rounded border border-border flex items-center justify-center">
           <FileText size={11} className="text-muted-foreground" />
@@ -38,14 +34,13 @@ export function Sidebar() {
         <span className="text-sm font-semibold tracking-tight">PaperMind AI</span>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-2 py-3 space-y-0.5">
         {nav.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
             <Link
               key={href}
-              href={href}
+              to={href}
               className={cn(
                 'flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors',
                 active
@@ -60,9 +55,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom */}
       <div className="px-2 py-3 border-t border-border space-y-1">
-        {/* Theme toggle */}
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors w-full"
